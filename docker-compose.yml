@@ -1,0 +1,47 @@
+version: '3'
+services:
+  mqtt-broker:
+    image: eclipse-mosquitto:latest
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+
+  blender-visualizer:
+    build: ./blender_visualizer
+    volumes:
+      - ./blender_visualizer/scripts:/app
+      - ./blender_visualizer/models:/models
+      - ./shared:/app/shared
+    environment:
+      - MQTT_BROKER=mqtt-broker
+      - MQTT_PORT=1883
+      - BLENDER_HEADLESS=true
+    depends_on:
+      - mqtt-broker
+    # Si necesitas interfaz gráfica, añade estas configuraciones
+    # volumes:
+    #   - /tmp/.X11-unix:/tmp/.X11-unix
+    # environment:
+    #   - DISPLAY=$DISPLAY
+
+  backend:
+    build: ./backend
+    ports:
+      - "0.0.0.0:8000:8000"  # Permite conexiones desde cualquier IP
+    volumes:
+      - ./shared:/app/shared
+    environment:
+      - HOST=0.0.0.0  # Asegura que FastAPI escuche en todas las interfaces
+    depends_on:
+      - mqtt-broker
+
+  # data_logger:
+  #   build: ./data_logger
+  #   volumes:
+  #     - ./shared:/app/shared
+  #   depends_on:
+  #     - mqtt-broker

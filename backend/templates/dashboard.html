@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gemelo Digital - Dashboard</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="10"> <!-- Actualizar cada 10 segundos -->
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>Gemelo Digital - Panel de Control</h1>
+            <div class="user-info">
+                Usuario: {{ user.username }} | <a href="/">Cerrar Sesión</a>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="status-panel">
+                <h2>Estado del Sistema</h2>
+                <div class="status-indicator {{ 'active' if data.estado == 'activo' else 'inactive' }}">
+                    {{ data.estado }}
+                </div>
+                <div class="timestamp">
+                    Última actualización: {{ data.timestamp }}
+                </div>
+            </div>
+            
+            <div class="data-panels">
+                <div class="data-panel">
+                    <h3>Deformación</h3>
+                    <div class="data-value">{{ data.deformacion }}</div>
+                </div>
+                
+                <div class="data-panel">
+                    <h3>Carga Aplicada</h3>
+                    <div class="data-value">{{ data.carga }}</div>
+                </div>
+                
+                <div class="data-panel">
+                    <h3>Posición de la Carreta</h3>
+                    <div class="data-value">{{ data.posicion_carreta }}</div>
+                </div>
+            </div>
+            
+            <div class="visualization-panel">
+                <h2>Visualización del Gemelo Digital</h2>
+                <div class="visualization-content">
+                    <img id="model-render" src="/shared/render.png" alt="Modelo 3D del Gemelo Digital" width="100%">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Actualizar la imagen del modelo cada 10 segundos
+        setInterval(function() {
+            const img = document.getElementById('model-render');
+            // Añadir un parámetro de tiempo para evitar el caché del navegador
+            img.src = '/shared/render.png?' + new Date().getTime();
+        }, 10000);
+    </script>
+</body>
+</html>
